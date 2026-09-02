@@ -12,16 +12,17 @@ export function computeBalances(members, expenses) {
       const key = Number(id);
       bal[key] = (bal[key] || 0) - share;
     }
+  }
 
-    if (!(exp.paidBy in shares) && !(String(exp.paidBy) in shares)) {
-      const n = exp.splitWith.length || 1;
-      bal[exp.paidBy] -= Number(exp.amount) / n;
-    }
+  for (const id of Object.keys(bal)) {
+    bal[id] = Number(bal[id].toFixed(2));
   }
 
   return bal;
 }
 
 export function totalSpent(expenses) {
-  return expenses.reduce((s, e) => s + Number(e.amount), 0);
+  const sum = expenses.reduce((s, e) => s + Number(e.amount), 0);
+  return Number(sum.toFixed(2));
 }
+

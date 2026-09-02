@@ -7,8 +7,8 @@ export function suggestSettlements(balances, members) {
   for (const [id, raw] of Object.entries(balances)) {
     const amount = Number(raw);
     const memberId = Number(id);
-    if (amount < -0.001) debtors.push({ id: memberId, amount: -amount });
-    else if (amount > 0.001) creditors.push({ id: memberId, amount });
+    if (amount < -0.005) debtors.push({ id: memberId, amount: Number((-amount).toFixed(2)) });
+    else if (amount > 0.005) creditors.push({ id: memberId, amount: Number(amount.toFixed(2)) });
   }
 
   debtors.sort((a, b) => b.amount - a.amount);
@@ -21,28 +21,36 @@ export function suggestSettlements(balances, members) {
   while (i < debtors.length && j < creditors.length) {
     const d = debtors[i];
     const c = creditors[j];
+    const diff = Number((d.amount - c.amount).toFixed(2));
 
-    if (d.amount > c.amount) {
+    if (diff > 0.005) {
       transfers.push({
         from: d.id,
         to: c.id,
         fromName: nameOf(d.id),
         toName: nameOf(c.id),
-        amount: c.amount,
+        amount: Number(c.amount.toFixed(2)),
       });
-      d.amount -= c.amount;
+      d.amount = Number((d.amount - c.amount).toFixed(2));
       j += 1;
-    } else if (d.amount < c.amount) {
+    } else if (diff < -0.005) {
       transfers.push({
         from: d.id,
         to: c.id,
         fromName: nameOf(d.id),
         toName: nameOf(c.id),
-        amount: d.amount,
+        amount: Number(d.amount.toFixed(2)),
       });
-      c.amount -= d.amount;
+      c.amount = Number((c.amount - d.amount).toFixed(2));
       i += 1;
     } else {
+      transfers.push({
+        from: d.id,
+        to: c.id,
+        fromName: nameOf(d.id),
+        toName: nameOf(c.id),
+        amount: Number(d.amount.toFixed(2)),
+      });
       i += 1;
       j += 1;
     }
@@ -50,3 +58,4 @@ export function suggestSettlements(balances, members) {
 
   return transfers;
 }
+
