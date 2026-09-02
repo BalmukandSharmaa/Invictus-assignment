@@ -24,6 +24,10 @@ export default function AddExpenseForm({ members, onAdd }) {
   const [percents, setPercents] = useState(evenPercents(members.map((m) => m.id)));
   const [error, setError] = useState("");
 
+  const currentPaidBy = members.some((m) => String(m.id) === String(paidBy))
+    ? paidBy
+    : members[0]?.id ?? "";
+
   const selected = useMemo(
     () => members.filter((m) => splitWith.includes(m.id)),
     [members, splitWith]
@@ -45,13 +49,15 @@ export default function AddExpenseForm({ members, onAdd }) {
       setError("Add a description and a positive amount.");
       return;
     }
-    if (!splitWith.length) {
+    const activeMemberIds = members.map((m) => m.id);
+    const validSplitWith = splitWith.filter((id) => activeMemberIds.includes(id));
+    if (!validSplitWith.length) {
       setError("Pick at least one person to split with.");
       return;
     }
     const activePercents = {};
     if (splitType === "percent") {
-      for (const id of splitWith) {
+      for (const id of validSplitWith) {
         activePercents[id] = percents[id] ?? 0;
       }
       if (!percentsSumTo100(activePercents)) {
@@ -63,13 +69,14 @@ export default function AddExpenseForm({ members, onAdd }) {
     onAdd({
       description: description.trim(),
       amount: n,
-      paidBy: Number(paidBy),
+      paidBy: Number(currentPaidBy),
       splitType,
-      splitWith: splitWith.map(Number),
+      splitWith: validSplitWith.map(Number),
       percents: splitType === "percent" ? activePercents : undefined,
       date: new Date(date),
       category,
     });
+
 
     setDescription("");
     setAmount("");

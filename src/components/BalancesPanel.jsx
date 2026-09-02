@@ -1,13 +1,16 @@
 import { formatMoney } from "../lib/money.js";
 
 function initials(name) {
+  if (!name) return "?";
   return name
-    .split(" ")
+    .trim()
+    .split(/\s+/)
     .map((p) => p[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
 }
+
 
 export default function BalancesPanel({ members, balances }) {
   return (

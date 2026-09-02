@@ -3,8 +3,10 @@ import { formatMoney } from "../lib/money.js";
 import { dateValue, formatDate } from "../lib/format.js";
 
 function initials(name) {
+  if (!name) return "?";
   return name
-    .split(" ")
+    .trim()
+    .split(/\s+/)
     .map((p) => p[0])
     .join("")
     .slice(0, 2)
@@ -19,6 +21,17 @@ function ExpenseRow({ expense, memberMap, onDelete, onSaveAmount }) {
     setDraft(String(expense.amount));
   }, [expense.amount]);
 
+  function handleSave() {
+    const n = Number(draft);
+    if (Number.isFinite(n) && n > 0) {
+      if (n !== Number(expense.amount)) {
+        onSaveAmount(n);
+      }
+    } else {
+      setDraft(String(expense.amount));
+    }
+  }
+
   return (
     <article className="expense">
       <span className="avatar" style={{ background: payer?.color ?? "#888" }}>
@@ -31,20 +44,26 @@ function ExpenseRow({ expense, memberMap, onDelete, onSaveAmount }) {
         </div>
         <div className="expense-meta">
           {payer?.name ?? "Unknown"} · {formatDate(expense.date)} · split{" "}
-          {expense.splitWith.length} ways
+          {(expense.splitWith || []).length} ways
         </div>
         <div className="actions">
           <input
             className="edit-amount"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            onBlur={() => {
-              const n = Number(draft);
-              if (Number.isFinite(n) && n > 0 && n !== Number(expense.amount)) {
-                onSaveAmount(n);
+            onBlur={handleSave}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSave();
+                e.currentTarget.blur();
+              } else if (e.key === "Escape") {
+                setDraft(String(expense.amount));
+                e.currentTarget.blur();
               }
             }}
             aria-label={`Edit amount for ${expense.description}`}
+            title="Edit amount and press Enter or click away to save"
           />
           <button type="button" className="btn danger" onClick={onDelete}>
             Delete
@@ -55,6 +74,7 @@ function ExpenseRow({ expense, memberMap, onDelete, onSaveAmount }) {
     </article>
   );
 }
+
 
 export default function ExpenseList({
   expenses,
