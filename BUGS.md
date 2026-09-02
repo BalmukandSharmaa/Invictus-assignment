@@ -124,4 +124,15 @@ Keep this file in the repo and **commit it** with your fixes.
 
 **What I changed:** Added `formatSplitMeta` in `src/components/ExpenseList.jsx` to explicitly show the person's name when an expense is for 1 member (e.g., `for Carlos (1 person)`), list member names for subset splits (e.g., `split 2 ways (Aisha, Diya)`), and show `split 4 ways (all)` when shared among the entire group.
 
+---
+
+## Bug 13
+
+**How to reproduce:** Create or view an expense with a custom percentage split (e.g. Wine with 33.33%, 33.33%, 33.34%).
+
+**What is wrong:** The expense list only showed "split 3 ways (Aisha, Ben, Carlos)", completely hiding that it was a custom percentage split and obscuring each participant's allocated percentage.
+
+**What I changed:** Updated `formatSplitMeta` in `src/components/ExpenseList.jsx` to check if `splitType === "percent"` and display each member's exact percentage (e.g., `custom % (Aisha: 33.33%, Ben: 33.33%, Carlos: 33.34%)`).
+
+
 

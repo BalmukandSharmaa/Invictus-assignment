@@ -14,6 +14,17 @@ function initials(name) {
 }
 
 function formatSplitMeta(expense, memberMap, totalMembersCount) {
+  if (expense.splitType === "percent" && expense.percents) {
+    const pcts = Object.entries(expense.percents)
+      .map(([id, pct]) => {
+        const m = memberMap[id];
+        const name = m ? m.name.split(" ")[0] : `#${id}`;
+        return `${name}: ${pct}%`;
+      })
+      .join(", ");
+    return `custom % (${pcts})`;
+  }
+
   const splitWith = expense.splitWith || [];
   const count = splitWith.length;
 
@@ -36,6 +47,7 @@ function formatSplitMeta(expense, memberMap, totalMembersCount) {
 
   return `split ${count} ways (${names})`;
 }
+
 
 function ExpenseRow({ expense, memberMap, totalMembersCount, onDelete, onSaveAmount }) {
   const [draft, setDraft] = useState(String(expense.amount));
