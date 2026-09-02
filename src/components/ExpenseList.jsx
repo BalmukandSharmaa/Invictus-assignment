@@ -119,13 +119,36 @@ export default function ExpenseList({
   onDelete,
   onUpdate,
 }) {
+  const [sortOrder, setSortOrder] = useState("newest");
   const memberMap = Object.fromEntries(members.map((m) => [m.id, m]));
-  const sorted = [...expenses].sort((a, b) => dateValue(b.date) - dateValue(a.date));
+
+  const sorted = [...expenses].sort((a, b) => {
+    return sortOrder === "newest"
+      ? dateValue(b.date) - dateValue(a.date)
+      : dateValue(a.date) - dateValue(b.date);
+  });
 
   return (
     <section className="card">
-      <h2>Expenses</h2>
-      <p className="sort-label">Newest first</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
+        <h2 style={{ margin: 0 }}>Expenses</h2>
+        <div className="chips">
+          <button
+            type="button"
+            className={`chip ${sortOrder === "newest" ? "on" : ""}`}
+            onClick={() => setSortOrder("newest")}
+          >
+            Newest first
+          </button>
+          <button
+            type="button"
+            className={`chip ${sortOrder === "oldest" ? "on" : ""}`}
+            onClick={() => setSortOrder("oldest")}
+          >
+            Oldest first
+          </button>
+        </div>
+      </div>
       {sorted.length === 0 ? (
         <p className="empty">No expenses match these filters.</p>
       ) : (
@@ -139,9 +162,9 @@ export default function ExpenseList({
             onSaveAmount={(amount) => onUpdate(expense.id, { amount })}
           />
         ))
-
       )}
     </section>
   );
 }
+
 
