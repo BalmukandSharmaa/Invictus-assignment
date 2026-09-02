@@ -114,3 +114,14 @@ Keep this file in the repo and **commit it** with your fixes.
 
 **What I changed:** Added `UPDATE_MEMBER` and `DELETE_MEMBER` reducer handlers in `src/state/store.js`, added member update/delete action handlers in `src/App.jsx` with safety checks against deleting members with recorded payments, and added inline name editing and delete controls to `PersonRow` in `src/components/SummaryCards.jsx`.
 
+---
+
+## Bug 12
+
+**How to reproduce:** View an expense that is allocated to 1 person (or a subset of people) in the expense list.
+
+**What is wrong:** The expense metadata displayed a generic and grammatically incorrect "split 1 ways" without showing who the cost was incurred for, leaving the story of who owes what unclear.
+
+**What I changed:** Added `formatSplitMeta` in `src/components/ExpenseList.jsx` to explicitly show the person's name when an expense is for 1 member (e.g., `for Carlos (1 person)`), list member names for subset splits (e.g., `split 2 ways (Aisha, Diya)`), and show `split 4 ways (all)` when shared among the entire group.
+
+

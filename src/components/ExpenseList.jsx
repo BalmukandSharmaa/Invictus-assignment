@@ -13,7 +13,31 @@ function initials(name) {
     .toUpperCase();
 }
 
-function ExpenseRow({ expense, memberMap, onDelete, onSaveAmount }) {
+function formatSplitMeta(expense, memberMap, totalMembersCount) {
+  const splitWith = expense.splitWith || [];
+  const count = splitWith.length;
+
+  if (count === 0) return "not split";
+  if (count === 1) {
+    const single = memberMap[splitWith[0]];
+    const name = single ? single.name.split(" ")[0] : `#${splitWith[0]}`;
+    return `for ${name} (1 person)`;
+  }
+  if (totalMembersCount && count === totalMembersCount) {
+    return `split ${count} ways (all)`;
+  }
+
+  const names = splitWith
+    .map((id) => {
+      const m = memberMap[id];
+      return m ? m.name.split(" ")[0] : `#${id}`;
+    })
+    .join(", ");
+
+  return `split ${count} ways (${names})`;
+}
+
+function ExpenseRow({ expense, memberMap, totalMembersCount, onDelete, onSaveAmount }) {
   const [draft, setDraft] = useState(String(expense.amount));
   const payer = memberMap[expense.paidBy];
 
@@ -43,9 +67,10 @@ function ExpenseRow({ expense, memberMap, onDelete, onSaveAmount }) {
           <span className="cat">{expense.category}</span>
         </div>
         <div className="expense-meta">
-          {payer?.name ?? "Unknown"} · {formatDate(expense.date)} · split{" "}
-          {(expense.splitWith || []).length} ways
+          {payer?.name ?? "Unknown"} · {formatDate(expense.date)} ·{" "}
+          {formatSplitMeta(expense, memberMap, totalMembersCount)}
         </div>
+
         <div className="actions">
           <input
             className="edit-amount"
@@ -97,10 +122,12 @@ export default function ExpenseList({
             key={expense.id}
             expense={expense}
             memberMap={memberMap}
+            totalMembersCount={members.length}
             onDelete={() => onDelete(expense.id)}
             onSaveAmount={(amount) => onUpdate(expense.id, { amount })}
           />
         ))
+
       )}
     </section>
   );
