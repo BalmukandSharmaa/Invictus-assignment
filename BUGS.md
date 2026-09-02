@@ -103,3 +103,14 @@ Keep this file in the repo and **commit it** with your fixes.
 **What is wrong:** The form did not clear `description`, `amount`, or errors upon successful addition, forcing the user to manually clear the inputs before entering another expense.
 
 **What I changed:** Added state reset calls (`setDescription("")`, `setAmount("")`, `setError("")`) in `submit` inside `src/components/AddExpenseForm.jsx`.
+
+---
+
+## Bug 11
+
+**How to reproduce:** Attempt to edit a group member's name or delete a member (e.g. if a name had a typo or an extra member was added).
+
+**What is wrong:** The app provided no interface or state actions to edit or delete members in the group, and `store.js` lacked `UPDATE_MEMBER` and `DELETE_MEMBER` actions.
+
+**What I changed:** Added `UPDATE_MEMBER` and `DELETE_MEMBER` reducer handlers in `src/state/store.js`, added member update/delete action handlers in `src/App.jsx` with safety checks against deleting members with recorded payments, and added inline name editing and delete controls to `PersonRow` in `src/components/SummaryCards.jsx`.
+

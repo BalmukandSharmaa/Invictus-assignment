@@ -65,6 +65,19 @@ export default function App() {
     });
   }
 
+  function updateMember(id, name) {
+    dispatch({ type: "UPDATE_MEMBER", id, name });
+  }
+
+  function deleteMember(id) {
+    const hasPaid = state.expenses.some((e) => e.paidBy === id);
+    if (hasPaid) {
+      alert("Cannot delete a member who has paid for recorded expenses. Please delete or reassign their expenses first.");
+      return;
+    }
+    dispatch({ type: "DELETE_MEMBER", id });
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -104,6 +117,8 @@ export default function App() {
             members={state.members}
             expenses={state.expenses}
             onAddMember={addMember}
+            onUpdateMember={updateMember}
+            onDeleteMember={deleteMember}
           />
           <BalancesPanel members={state.members} balances={balances} />
           <SettleUpPanel transfers={transfers} />
@@ -112,3 +127,4 @@ export default function App() {
     </div>
   );
 }
+

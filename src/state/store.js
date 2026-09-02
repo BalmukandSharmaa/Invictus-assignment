@@ -78,8 +78,27 @@ export function reducer(state, action) {
     case "ADD_MEMBER": {
       return { ...state, members: [...state.members, action.member] };
     }
+    case "UPDATE_MEMBER": {
+      return {
+        ...state,
+        members: state.members.map((m) =>
+          m.id === action.id ? { ...m, name: action.name } : m
+        ),
+      };
+    }
+    case "DELETE_MEMBER": {
+      return {
+        ...state,
+        members: state.members.filter((m) => m.id !== action.id),
+        expenses: state.expenses.map((e) => ({
+          ...e,
+          splitWith: (e.splitWith || []).filter((id) => id !== action.id),
+        })),
+      };
+    }
     default:
       return state;
+
   }
 }
 
