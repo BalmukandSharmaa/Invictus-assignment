@@ -134,5 +134,16 @@ Keep this file in the repo and **commit it** with your fixes.
 
 **What I changed:** Updated `formatSplitMeta` in `src/components/ExpenseList.jsx` to check if `splitType === "percent"` and display each member's exact percentage (e.g., `custom % (Aisha: 33.33%, Ben: 33.33%, Carlos: 33.34%)`).
 
+---
+
+## Bug 14
+
+**How to reproduce:** Look at the Expenses panel. There was only a static "Newest first" text label with no option for travelers to view expenses chronologically (Oldest first) to follow trip timeline order.
+
+**What is wrong:** The application lacked an interactive sorting control to switch between "Newest first" and "Oldest first" sorting modes.
+
+**What I changed:** Added interactive "Newest first" and "Oldest first" toggle chip buttons to `src/components/ExpenseList.jsx` with active state styling and dynamic date sorting in both ascending and descending directions.
+
+
 
 
